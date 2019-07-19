@@ -3,9 +3,9 @@ import unittest
 sys.path.append('../../')
 
 import fraudfeature as ftool
-from fraudfeature import parse_float
+from fraudfeature import parse_float, parse_str, day_interval
 from fraudfeature import equal, regex_match
-from fraudfeature import sum, avg
+from fraudfeature import Sum, Mean, DummyCount
 
 
 class generate_test(unittest.TestCase):
@@ -45,7 +45,22 @@ class generate_test(unittest.TestCase):
                     "prefix": "Cnt1",
                     "desc": "个数1",
                     "preprocessor": parse_float,
-                    "aggregator": [sum, avg],
+                    "aggregator": [Sum, Mean,],
+                },
+                {
+                    "feature":["TYPE_C"],
+                    "prefix": "TypeC",
+                    "desc":"分类C",
+                    "preprocessor": parse_str,
+                    "aggregator":[DummyCount,],
+                    "param":{"abcde":"C1", "defgh":"C2", "fghij":"C3", "klmno":"C4"}
+                },
+                {
+                    "feature":["APPLY_DT", "EVENT_DT"],
+                    "prefix": "ApplydtEventdt_Interval",
+                    "desc":"分类C",
+                    "preprocessor": day_interval,
+                    "aggregator":[Sum,],
                 }
             ]
         }

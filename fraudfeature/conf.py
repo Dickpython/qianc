@@ -4,26 +4,6 @@ from .preprocessor import parse_normal_time
 from numba import jit
 
 
-def apply_agg(func, arr):
-    result, name = [], []
-    if isinstance(func, list):
-        for f in func:
-            result.append(f(arr))
-            name.append(f.__name__)
-    return name, result
-
-
-def apply_filter(func, param, arr):
-    if isinstance(func, list) and isinstance(param, list):
-        filter_cond = np.array([True] * arr.shape[0])
-        for i, cmps in enumerate(zip(func, param)):
-            f, p = cmps
-            filter_cond = filter_cond & f(param=p, vals=arr[:,i]) 
-        return filter_cond
-    else:
-        # log.Error `func` and `param` need to be lists.
-        return
-
 @jit(nopython=True)
 def _apply_timewindow(conf, col_index, tw, arr):
     aply_idx = int(col_index[conf.get("time_index").get("apply_dt")])
@@ -48,7 +28,7 @@ def _check_time_index_validity(conf, col_index, arr):
 
 class Conf:
     def __init__(self, path, conf, sep='\t', domain=None, cn_domain=None,
-        default=-99999, default_str="NotAvailable"):
+        default=-99999., default_str="NotAvailable", missing_value=[None]):
         self.conf = conf
         self.domain = domain
         self.cn_domain=cn_domain
@@ -62,6 +42,7 @@ class Conf:
         self.sep = sep
         self.default = default
         self.default_str = default_str
+        self.missing_value = missing_value
         self.reserved_cols = []
         self.reserved_cols_index = []
         self.valid = self.check_conf()
@@ -110,8 +91,14 @@ class Conf:
                     _pnm    = "__".join([ fn, fe_entry.get("prefix")])
                     _pnm_cn = "__".join([ fn_cn, fe_entry.get("desc")])
                     for f in fe_entry.get("aggregator"):
-                        name.append("_".join([_pnm, f.__name__]))
-                        cn_name.append("_".join([_pnm_cn, f.__doc__]))
+                        if fe_entry.get("param") and isinstance(fe_entry.get("param"), dict):
+                            for target in fe_entry.get("param").values():
+                                name.append("_".join([_pnm, target, f.__name__]))
+                                cn_name.append("_".join([_pnm_cn, target, f.__doc__]))
+                        else:
+                            name.append("_".join([_pnm, f.__name__]))
+                            cn_name.append("_".join([_pnm_cn, f.__doc__]))
+                        
         self.output_header = self.primary_key + self.reserved_cols + [self.domain + n if self.domain else n for n in name] 
         self.output_cn_header = self.primary_key + self.reserved_cols + [self.cn_domain + n if self.cn_domain else n for n in cn_name]
 
@@ -130,18 +117,48 @@ class Conf:
             arr = _check_time_index_validity(self.conf, self.col_index, arr)       
         return self._compute(seq_no, arr)
 
+    def apply_agg(self, func, arr, param=None):
+        result, name = [], []
+        if isinstance(func, list):
+            for f in func:
+                if f.__name__ in ('DummyCount'):
+                    _r = f(vals=arr, missing_value=self.missing_value, 
+                    default=self.default, param=param)
+                else:
+                    _r = f(vals=arr, missing_value=self.missing_value, default=self.default)
+                if isinstance(_r, dict):
+                    for _n, _v in _r.items():
+                        result.append(_v)
+                        name.append(_n)
+                else:
+                    result.append(_r)
+                    name.append(f.__name__)
+        return name, result
+
+    def apply_filter(self, func, param, arr):
+        if isinstance(func, list) and isinstance(param, list):
+            filter_cond = np.array([True] * arr.shape[0])
+            for i, cmps in enumerate(zip(func, param)):
+                f, p = cmps
+                filter_cond = filter_cond & f(param=p, vals=arr[:,i]) 
+            return filter_cond
+        else:
+            # log.Error `func` and `param` need to be lists.
+            return
+
     def _compute(self, seq_no, vals):
         result = [v for v in np.take(vals, self.key_index + self.reserved_cols_index, axis=1)[0]]
         # Use `time_window` then combine with `filters` as criteria to select array data.
         time_window = self.conf.get("time_window") if "time_window" in self.conf else [None]
         for tw in time_window:
             tm_cond = _apply_timewindow(self.conf, self.col_index, tw, vals) if tw else np.array([True] * vals.shape[0])
-            for f in self.conf.get("filters"):
-                filter_idx = [ self.col_index[f] for f in f.get("feature") ]
-                slim_filter_arr = np.take(vals, filter_idx, axis=1)
-                filter_cond = apply_filter(func=f.get("func"), param=f.get("value"), arr=slim_filter_arr)
-
-                combine_cond = tm_cond & filter_cond
+            combine_cond = tm_cond
+            for f in self.conf.get("filters", [None]):
+                if f is not None:
+                    filter_idx = [ self.col_index[f] for f in f.get("feature") ]
+                    slim_filter_arr = np.take(vals, filter_idx, axis=1)
+                    filter_cond = self.apply_filter(func=f.get("func"), param=f.get("value"), arr=slim_filter_arr)
+                    combine_cond = combine_cond & filter_cond    
                 arr_ready = np.compress(combine_cond, vals, axis=0)
 
                 for fe_entry in self.conf.get("feature_entries"):
@@ -149,8 +166,8 @@ class Conf:
                     f_idx = [self.col_index[f] for f in fe_entry.get("feature")]
                     f_arr = np.take(arr_ready, f_idx, axis=1)
                     f_arr = _preprcss(f_arr)
-                    print("[DEBUG] f_arr", f_arr)
-                    _fn, _rslt = apply_agg(func=fe_entry.get("aggregator"), arr=f_arr)
+                    #print("[DEBUG] f_arr", f_arr)
+                    _fn, _rslt = self.apply_agg(func=fe_entry.get("aggregator"), arr=f_arr, param=fe_entry.get("param"))
                     for d in _rslt:
                         result.append(d)
         return seq_no, result
