@@ -1,10 +1,10 @@
 import numpy as np
 from datetime import datetime, timedelta
 from .preprocessor import parse_normal_time
-from numba import jit
+#from numba import jit
 
 
-@jit(nopython=True)
+#@jit(nopython=True)
 def _apply_timewindow(conf, col_index, tw, arr):
     aply_idx = int(col_index[conf.get("time_index").get("apply_dt")])
     evnt_idx = int(col_index[conf.get("time_index").get("event_dt")])
@@ -13,7 +13,7 @@ def _apply_timewindow(conf, col_index, tw, arr):
     return (_ta - _te) <= timedelta(tw)     
 
 
-@jit(nopython=True)
+#@jit(nopython=True)
 def _check_time_index_validity(conf, col_index, arr):
     # to-do: add parse time function 
     if "time_index" not in conf:
@@ -84,20 +84,25 @@ class Conf:
             for f in filter:
                 fn    = f.get("name") if f is not None else ""
                 fn_cn = f.get("cn_name") if f is not None else ""
+                # add time window in name
                 fn    = "__".join([ _tw, fn]) if _tw != "" else fn
                 fn_cn = "__".join([ _tw, fn_cn]) if _tw != "" else fn_cn
 
                 for fe_entry in self.conf.get("feature_entries"):
-                    _pnm    = "__".join([ fn, fe_entry.get("prefix")])
-                    _pnm_cn = "__".join([ fn_cn, fe_entry.get("desc")])
+                    _pnm    = "__".join([ fn, fe_entry.get("prefix")]) if fn != '' else fe_entry.get("prefix")
+                    _pnm_cn = "__".join([ fn_cn, fe_entry.get("desc")]) if fn_cn != '' else fe_entry.get("desc")
                     for f in fe_entry.get("aggregator"):
                         if fe_entry.get("param") and isinstance(fe_entry.get("param"), dict):
                             for target in fe_entry.get("param").values():
                                 name.append("_".join([_pnm, target, f.__name__]))
                                 cn_name.append("_".join([_pnm_cn, target, f.__doc__]))
                         else:
-                            name.append("_".join([_pnm, f.__name__]))
-                            cn_name.append("_".join([_pnm_cn, f.__doc__]))
+                            if f.__name__ != 'PassThrough':
+                                name.append("_".join([_pnm, f.__name__]))
+                                cn_name.append("_".join([_pnm_cn, f.__doc__]))
+                            else:
+                                name.append(_pnm)
+                                cn_name.append(_pnm_cn)
                         
         self.output_header = self.primary_key + self.reserved_cols + [self.domain + n if self.domain else n for n in name] 
         self.output_cn_header = self.primary_key + self.reserved_cols + [self.cn_domain + n if self.cn_domain else n for n in cn_name]
@@ -121,11 +126,12 @@ class Conf:
         result, name = [], []
         if isinstance(func, list):
             for f in func:
+                _default = self.default_str if f.__name__ == 'PassThrough' else self.default
                 if f.__name__ in ('DummyCount'):
                     _r = f(vals=arr, missing_value=self.missing_value, 
-                    default=self.default, param=param)
+                    default=_default, param=param)
                 else:
-                    _r = f(vals=arr, missing_value=self.missing_value, default=self.default)
+                    _r = f(vals=arr, missing_value=self.missing_value, default=_default)
                 if isinstance(_r, dict):
                     for _n, _v in _r.items():
                         result.append(_v)
@@ -165,8 +171,8 @@ class Conf:
                     _preprcss = fe_entry.get("preprocessor")
                     f_idx = [self.col_index[f] for f in fe_entry.get("feature")]
                     f_arr = np.take(arr_ready, f_idx, axis=1)
-                    f_arr = _preprcss(f_arr)
-                    #print("[DEBUG] f_arr", f_arr)
+                    if _preprcss:
+                        f_arr = _preprcss(f_arr, missing_value=self.missing_value)
                     _fn, _rslt = self.apply_agg(func=fe_entry.get("aggregator"), arr=f_arr, param=fe_entry.get("param"))
                     for d in _rslt:
                         result.append(d)

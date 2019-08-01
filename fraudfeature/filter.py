@@ -27,3 +27,6 @@ def regex_match(param, vals):
     _func = np.vectorize(lambda x: True if m_regex.search(x) is not None else False)
     out = _func(vals) if vals.shape[0] != 0 else vals.reshape(-1, 1)
     return out
+
+def parse_all(param, vals):
+    return np.array([True] * vals.shape[0])

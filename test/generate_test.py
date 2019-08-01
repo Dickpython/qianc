@@ -10,11 +10,10 @@ from fraudfeature import Sum, Mean, DummyCount
 
 class generate_test(unittest.TestCase):
     def setUp(self):
-        self.path   = "./test.tsv"
-        self.result = "./result_test.tsv"
+        self.path   = "./data/test.tsv"
+        self.result = "./output/result_test.tsv"
         self.conf = {
-            "index" : ["ID"],
-            "reserve" : ["FLAG"],
+            "index" : ["ID","FLAG"],
             "time_index" : {"apply_dt": "APPLY_DT", "event_dt": "EVENT_DT"},
             "filters": [
                 {

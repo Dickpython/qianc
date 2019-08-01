@@ -1,4 +1,0 @@
-ID	FLAG	test.filterA__Cnt1_sum	test.filterA__Cnt1_avg	test.filterC__Cnt1_sum	test.filterC__Cnt1_avg
-ID	FLAG	测试.过滤A__个数1_累和值	测试.过滤A__个数1_平均值	测试.过滤C__个数1_累和值	测试.过滤C__个数1_平均值
-1	1	-99997	-49998.5	14.0	7.0
-2	1	3.0	1.5	14.0	7.0

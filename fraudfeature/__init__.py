@@ -1,13 +1,13 @@
 import os
 
 from multiprocessing import Pool
-from itertools import groupby
 
 from .conf import Conf
-from .filter import equal, regex_match
-from .aggregator import Mean, Sum, Max, Min, Median, Quantile25, Quantile75
+from .filter import equal, not_equal, regex_match, parse_all, match, not_match
+from .aggregator import PassThrough, Mean, Sum, Max, Min, Median, Quantile25, Quantile75
 from .aggregator import DummyCount
 from .preprocessor import parse_float, parse_str, day_interval, month_interval, year_interval
+from .preprocessor import cal_similarity, parse_region
 
 
 def __enumerate_group(sequence, keyfunc):
@@ -26,14 +26,15 @@ def __enumerate_group(sequence, keyfunc):
 
 def generate(raw=None, result_file_path=None, conf=None, 
         prefix=None, cnprefix=None, n=1, chunksize=1, debug=False, 
-        log_enable=False, log_path=None, sep='\t', domain=None, cn_domain=None):
+        log_enable=False, log_path=None, sep='\t', domain=None, cn_domain=None, missing_value=[]):
     if raw is None and os.path.exists(raw) is False:
         # log.Error raw file path not exists.
         return 
     if os.path.exists("/".join(result_file_path.split('/')[:-1])) is False:
         # log.Error result file path not exists
         return
-    config = Conf(path=raw, conf=conf, sep=sep, domain=domain, cn_domain=cn_domain) 
+    config = Conf(path=raw, conf=conf, sep=sep, domain=domain, 
+    cn_domain=cn_domain, missing_value=missing_value) 
     if config.valid is False:
         # log.Error configuration is invalid
         return
