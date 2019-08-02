@@ -1,6 +1,6 @@
 import sys
 import unittest
-sys.path.append('../../')
+sys.path.append('../../../')
 
 import fraudfeature as ftool
 from fraudfeature import year_interval, parse_str
@@ -58,6 +58,7 @@ class yh_identity_test(unittest.TestCase):
         }
     
     def test_identity_process(self):
+        print("[Exec] YH.IDENTITY ...")
         ftool.generate(
             raw = self.path, 
             result_file_path = self.result,

@@ -78,15 +78,15 @@ class Conf:
         name, cn_name = [], []
         for tw in time_window:
             _tw, _cn_tw = "", ""
-            _tw = "" if tw is None else _tw + "".join(["last", str(tw), "days"])
-            _cn_tw = "" if tw is None else _cn_tw + "".join(["过去", str(tw), "days"])
+            _tw = "" if tw is None else _tw + "".join(["Last", str(tw), "Days"])
+            _cn_tw = "" if tw is None else _cn_tw + "".join(["过去", str(tw), "天"])
 
             for f in filter:
                 fn    = f.get("name") if f is not None else ""
                 fn_cn = f.get("cn_name") if f is not None else ""
                 # add time window in name
                 fn    = "__".join([ _tw, fn]) if _tw != "" else fn
-                fn_cn = "__".join([ _tw, fn_cn]) if _tw != "" else fn_cn
+                fn_cn = "__".join([ _cn_tw, fn_cn]) if _cn_tw != "" else fn_cn
 
                 for fe_entry in self.conf.get("feature_entries"):
                     _pnm    = "__".join([ fn, fe_entry.get("prefix")]) if fn != '' else fe_entry.get("prefix")
@@ -164,7 +164,7 @@ class Conf:
                     filter_idx = [ self.col_index[f] for f in f.get("feature") ]
                     slim_filter_arr = np.take(vals, filter_idx, axis=1)
                     filter_cond = self.apply_filter(func=f.get("func"), param=f.get("value"), arr=slim_filter_arr)
-                    combine_cond = combine_cond & filter_cond    
+                    combine_cond = tm_cond & filter_cond    
                 arr_ready = np.compress(combine_cond, vals, axis=0)
 
                 for fe_entry in self.conf.get("feature_entries"):

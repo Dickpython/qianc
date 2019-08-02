@@ -1,12 +1,10 @@
 import sys
 import unittest
-sys.path.append('../../')
+sys.path.append('../../../')
 
 import fraudfeature as ftool
-from fraudfeature import year_interval, parse_str, parse_region
 from fraudfeature import parse_all, regex_match
-from fraudfeature import Mean, Sum, Max, Min, Median, Quantile25, Quantile75
-from fraudfeature import PassThrough, DummyCount
+from fraudfeature import DummyCount
 
 
 class yh_profession_test(unittest.TestCase):
@@ -48,6 +46,7 @@ class yh_profession_test(unittest.TestCase):
         }
     
     def test_profession_process(self):
+        print("[Exec] YH.RECORDINFO ...")
         ftool.generate(
             raw = self.path, 
             result_file_path = self.result,

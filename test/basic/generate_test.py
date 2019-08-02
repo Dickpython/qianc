@@ -1,6 +1,6 @@
 import sys
 import unittest
-sys.path.append('../../')
+sys.path.append('../../../')
 
 import fraudfeature as ftool
 from fraudfeature import parse_float, parse_str, day_interval

@@ -1,11 +1,12 @@
 import numpy as np
+from datetime import datetime
 from .util.common import parse_date, diff_date, diff_month, diff_year
 from .util.common import similarity
 from .util.common import find_region, find_city, find_citytier
 
 
-def parse_normal_time(vals, missing_value=[None], default=np.nan):
-    _func = np.vectorize(parse_date)
+def parse_normal_time(vals, missing_value=[None], default=datetime(1900,1,1)):
+    _func = np.vectorize(lambda x: parse_date(x) if parse_date(x) else default)
     out = _func(vals) if vals.shape[0] != 0 else vals.reshape(-1, 1)
     return out
 

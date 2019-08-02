@@ -1,3 +1,8 @@
+test/output/
 fraudfeature/__pycache__
 test/__pycache__
 fraudfeature/aggregator/__pycache__
+test/yh/__pycache__/
+.DS_Store
+doc/.DS_Store
+fraudfeature/.DS_Store
