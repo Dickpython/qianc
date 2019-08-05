@@ -36,10 +36,9 @@ def year_interval(vals, missing_value=[None], default=np.nan, **kwargs):
 
 
 def parse_ratio(vals, missing_value=[None], default=np.nan, **kwargs):
-    print(vals)
     result = np.array([float(v[0])/float(v[1]) if v[0] not in missing_value \
         and v[1] not in missing_value and float(v[1]) >0 else default for v in vals])
-    print(result)
+    # print(result)
     return result
 
 

@@ -43,8 +43,6 @@ class Conf:
         self.default = default
         self.default_str = default_str
         self.missing_value = missing_value
-        self.reserved_cols = []
-        self.reserved_cols_index = []
         self.valid = self.check_conf()
         if self.valid:
             self._load_index(path)
@@ -67,8 +65,6 @@ class Conf:
             header = read_file.readline().decode().strip('\n').split(self.sep)
         self.col_index = {h:i for i,h in enumerate(header)}
         self.index_col = {i:h for i,h in enumerate(header)}
-        self.reserved_cols = self.conf.get("reserve", []) 
-        self.reserved_cols_index = [self.col_index[k] for k in self.reserved_cols]
         self.primary_key = self.conf.get("index")
         self.key_index = [self.col_index[k] for k in self.conf.get("index")]
 
@@ -106,8 +102,8 @@ class Conf:
                                 name.append(_pnm)
                                 cn_name.append(_pnm_cn)
                         
-        self.output_header = self.primary_key + self.reserved_cols + [self.domain + n if self.domain else n for n in name] 
-        self.output_cn_header = self.primary_key + self.reserved_cols + [self.cn_domain + n if self.cn_domain else n for n in cn_name]
+        self.output_header = self.primary_key + [self.domain + n if self.domain else n for n in name] 
+        self.output_cn_header = self.primary_key + [self.cn_domain + n if self.cn_domain else n for n in cn_name]
 
     def apply_key(self, vals):
         val = vals.decode().strip("\n").split(self.sep)
@@ -151,7 +147,7 @@ class Conf:
             return
 
     def _compute(self, seq_no, vals):
-        result = [v for v in np.take(vals, self.key_index + self.reserved_cols_index, axis=1)[0]]
+        result = [v for v in np.take(vals, self.key_index, axis=1)[0]]
         # Use `time_window` then combine with `filters` as criteria to select array data.
         time_window = self.conf.get("time_window") if "time_window" in self.conf else [None]
         for tw in time_window:
