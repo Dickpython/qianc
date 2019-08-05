@@ -58,6 +58,18 @@ def parse_region(vals, missing_value=[None], default=np.nan, **kwargs):
     return out
 
 
+def parse_city(vals, missing_value=[None], default=np.nan, **kwargs):
+    _func = np.vectorize(lambda x: find_city(x) if x != "" and x is not None else default)
+    out = _func(vals) if vals.shape[0] != 0 else vals.reshape(-1, 1)
+    return out
+
+
+def parse_citytier(vals, missing_value=[None], default=np.nan, **kwargs):
+    _func = np.vectorize(lambda x: find_citytier(x) if x != "" and x is not None else default)
+    out = _func(vals) if vals.shape[0] != 0 else vals.reshape(-1, 1)
+    return out
+
+
 def parse_24month(vals, param, missing_value=[None], default=np.nan, **kwargs):
     _M = [k for k in param.keys()]
     _M.sort()

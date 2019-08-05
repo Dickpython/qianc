@@ -8,7 +8,8 @@ from .filter import equal, not_equal, regex_match, parse_all, match, not_match
 from .aggregator import PassThrough, Mean, Sum, Max, Min, Median, Quantile25, Quantile75
 from .aggregator import DummyCount, MulMax, MulMin, MulSum, MulMean, MulStd, MulQuantile25, MulQuantile75, MulMedian
 from .preprocessor import parse_float, parse_str, day_interval, month_interval, year_interval
-from .preprocessor import cal_similarity, parse_24month, parse_region, parse_ratio
+from .preprocessor import cal_similarity, parse_24month, parse_ratio
+from .preprocessor import parse_region, parse_city, parse_citytier
 
 
 def __enumerate_group(sequence, keyfunc):
