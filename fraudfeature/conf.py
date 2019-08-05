@@ -93,9 +93,11 @@ class Conf:
                     _pnm_cn = "__".join([ fn_cn, fe_entry.get("desc")]) if fn_cn != '' else fe_entry.get("desc")
                     for f in fe_entry.get("aggregator"):
                         if fe_entry.get("param") and isinstance(fe_entry.get("param"), dict):
-                            for target in fe_entry.get("param").values():
-                                name.append("_".join([_pnm, target, f.__name__]))
-                                cn_name.append("_".join([_pnm_cn, target, f.__doc__]))
+                            _M = [k for k in fe_entry.get("param").keys()]
+                            _M.sort()
+                            for target in _M:
+                                name.append("_".join([_pnm, fe_entry.get("param").get(target), f.__name__]))
+                                cn_name.append("_".join([_pnm_cn, fe_entry.get("param").get(target), f.__doc__]))
                         else:
                             if f.__name__ != 'PassThrough':
                                 name.append("_".join([_pnm, f.__name__]))
@@ -127,11 +129,7 @@ class Conf:
         if isinstance(func, list):
             for f in func:
                 _default = self.default_str if f.__name__ == 'PassThrough' else self.default
-                if f.__name__ in ('DummyCount'):
-                    _r = f(vals=arr, missing_value=self.missing_value, 
-                    default=_default, param=param)
-                else:
-                    _r = f(vals=arr, missing_value=self.missing_value, default=_default)
+                _r = f(vals=arr, missing_value=self.missing_value, default=_default, param=param)
                 if isinstance(_r, dict):
                     for _n, _v in _r.items():
                         result.append(_v)
@@ -172,7 +170,7 @@ class Conf:
                     f_idx = [self.col_index[f] for f in fe_entry.get("feature")]
                     f_arr = np.take(arr_ready, f_idx, axis=1)
                     if _preprcss:
-                        f_arr = _preprcss(f_arr, missing_value=self.missing_value)
+                        f_arr = _preprcss(f_arr, missing_value=self.missing_value, param=fe_entry.get("param"))
                     _fn, _rslt = self.apply_agg(func=fe_entry.get("aggregator"), arr=f_arr, param=fe_entry.get("param"))
                     for d in _rslt:
                         result.append(d)

@@ -1,13 +1,14 @@
 import os
 
 from multiprocessing import Pool
-
+import time
+from tqdm import tqdm
 from .conf import Conf
 from .filter import equal, not_equal, regex_match, parse_all, match, not_match
 from .aggregator import PassThrough, Mean, Sum, Max, Min, Median, Quantile25, Quantile75
-from .aggregator import DummyCount
+from .aggregator import DummyCount, MulMax, MulMin, MulSum, MulMean, MulStd, MulQuantile25, MulQuantile75, MulMedian
 from .preprocessor import parse_float, parse_str, day_interval, month_interval, year_interval
-from .preprocessor import cal_similarity, parse_region
+from .preprocessor import cal_similarity, parse_24month, parse_region, parse_ratio
 
 
 def __enumerate_group(sequence, keyfunc):
@@ -53,7 +54,7 @@ def generate(raw=None, result_file_path=None, conf=None,
         # skip header
         input_file.readline()
         for seq_no, out_data in pool.imap(config.pipefunc, \
-            __enumerate_group(input_file, config.apply_key), chunksize=chunksize):
+            tqdm(__enumerate_group(input_file, config.apply_key), desc="Process"), chunksize=chunksize):
             if seq_no == 0:
                 continue
             output_file.write(sep.join([str(v) for v in out_data]) + "\n")

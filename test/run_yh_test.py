@@ -4,10 +4,11 @@ sys.path.append('../')
 
 
 testmodules = [
-#    "yh.yh_1_identity_test",
-#    "yh.yh_2_profession_test",
-#    "yh.yh_5_recorddeta_test",
+   "yh.yh_1_identity_test",
+   "yh.yh_2_profession_test",
+   "yh.yh_5_recorddeta_test",
    "yh.yh_10_loan_test",
+   "yh.yh_13_latest24mon_test",
 ]
 
 suite = unittest.TestSuite()

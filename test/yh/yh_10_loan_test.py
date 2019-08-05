@@ -3,7 +3,7 @@ import unittest
 sys.path.append('../../../')
 
 import fraudfeature as ftool
-from fraudfeature import regex_match, day_interval
+from fraudfeature import regex_match, day_interval, parse_ratio
 from fraudfeature import DummyCount
 from fraudfeature import Mean, Sum, Max, Min, Median, Quantile25, Quantile75
 
@@ -70,13 +70,12 @@ class yh_identity_test(unittest.TestCase):
                     }
                 },
                 {
-                    "feature":["ECREDDATE", "OPENDATE"],
-                    "prefix": "ApplydtOpendt_Interval",
-                    "preprocessor": day_interval,
-                    "desc":"贷款发放日期差",
+                    "feature":["CURROVERDUEAMOUNT", "CREDITLIMITAMOUNT"],
+                    "prefix": "CurrodueamtCreditlimit_Ratio",
+                    "preprocessor": parse_ratio,
+                    "desc":"当前逾期金额占比",
                     "aggregator":[Mean, Sum, Max, Min, Median, Quantile25, Quantile75,],
                 },
-
             ]
         }
     

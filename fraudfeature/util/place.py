@@ -221,7 +221,7 @@ def _load_boundary():
 
 _timer = time.time()
 _province_rtree, _city_rtree, _county_rtree = _load_boundary()
-print('District boundaries loaded in %.2f secs' % (time.time() - _timer, ))
+print('[INFO] District boundaries loaded in %.2f secs' % (time.time() - _timer, ))
 
 def __match_loc(lon, lat, match_county=False):
     pt = Point(lon, lat)
