@@ -81,8 +81,8 @@ class Conf:
                 fn    = f.get("name") if f is not None else ""
                 fn_cn = f.get("cn_name") if f is not None else ""
                 # add time window in name
-                fn    = "__".join([ _tw, fn]) if _tw != "" else fn
-                fn_cn = "__".join([ _cn_tw, fn_cn]) if _cn_tw != "" else fn_cn
+                fn    = "__".join([ fn, _tw]) if _tw != "" else fn
+                fn_cn = "__".join([ fn_cn, _cn_tw ]) if _cn_tw != "" else fn_cn
 
                 for fe_entry in self.conf.get("feature_entries"):
                     _pnm    = "__".join([ fn, fe_entry.get("prefix")]) if fn != '' else fe_entry.get("prefix")

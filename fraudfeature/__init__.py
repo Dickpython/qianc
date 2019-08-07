@@ -27,8 +27,9 @@ def __enumerate_group(sequence, keyfunc):
 
 
 def generate(raw=None, result_file_path=None, conf=None, 
-        prefix=None, cnprefix=None, n=1, chunksize=1, debug=False, 
-        log_enable=False, log_path=None, sep='\t', domain=None, cn_domain=None, missing_value=[]):
+        n=1, chunksize=1, debug=False, log_enable=False, log_path=None, 
+        sep='\t', domain=None, cn_domain=None, 
+        missing_value=[],default=-99999., default_str="NotAvailable"):
     if raw is None and os.path.exists(raw) is False:
         # log.Error raw file path not exists.
         return 
@@ -36,7 +37,8 @@ def generate(raw=None, result_file_path=None, conf=None,
         # log.Error result file path not exists
         return
     config = Conf(path=raw, conf=conf, sep=sep, domain=domain, 
-    cn_domain=cn_domain, missing_value=missing_value) 
+    cn_domain=cn_domain, missing_value=missing_value,
+    default=default, default_str=default_str) 
     if config.valid is False:
         # log.Error configuration is invalid
         return
