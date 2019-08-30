@@ -3,11 +3,12 @@ import unittest
 sys.path.append('../../../')
 
 import fraudfeature as ftool
-from fraudfeature import parse_all, regex_match
+from fraudfeature import parse_all, regex_match, day_interval
 from fraudfeature import DummyCount
+from fraudfeature import Mean, Sum, Max, Min, Median, Quantile25, Quantile75, Std
 
 
-class yh_profession_test(unittest.TestCase):
+class yh_recorddeta_test(unittest.TestCase):
     def setUp(self):
         self.path   = "./data/recorddeta_data.tsv"
         self.result = "./output/recorddeta_data_result.tsv"
@@ -36,16 +37,21 @@ class yh_profession_test(unittest.TestCase):
                     "prefix": "Queryreason",
                     "desc":"查询",
                     "aggregator":[DummyCount,],
-                    "param":{"NotAvailable":"C0",
-                         "08|担保资格审查": "C1",
+                    "param":{ "NotAvailable":"C0",
+                        "08|担保资格审查": "C1",
                         "03|信用卡审批": "C2",
                         "02|贷款审批": "C3"},
-
+                },
+                {
+                    "feature":["ECREDDATE","QUERYDATE"],
+                    "prefix": "ApplydtQuerydt_Interval", "desc": "查询时间差",
+                    "preprocessor": day_interval,
+                    "aggregator": [Mean, Sum, Max, Min, Median, Quantile25, Quantile75, Std,],
                 },
             ]
         }
     
-    def test_profession_process(self):
+    def test_recorddeta_process(self):
         print("[Exec] YH.RECORDINFO ...")
         ftool.generate(
             raw = self.path, 
