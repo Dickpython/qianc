@@ -5,7 +5,7 @@ import time
 from tqdm import tqdm
 from .conf import Conf
 from .filter import equal, not_equal, regex_match, parse_all, match, not_match
-from .aggregator import PassThrough, Mean, Sum, Max, Min, Median, Quantile25, Quantile75
+from .aggregator import PassThrough, Mean, Sum, Max, Min, Median, Quantile25, Quantile75, Std, UniqueCount
 from .aggregator import DummyCount, MulMax, MulMin, MulSum, MulMean, MulStd, MulQuantile25, MulQuantile75, MulMedian
 from .preprocessor import parse_float, parse_str, day_interval, month_interval, year_interval
 from .preprocessor import cal_similarity, parse_24month, parse_ratio
@@ -49,11 +49,15 @@ def generate(raw=None, result_file_path=None, conf=None,
         print("[INFO] header is invalid!")
         output_header = ""
     # log.Info, log key_index
+    feature_dict_path = ".".join(result_file_path.split('.')[:-1]) + "_cnmap.tsv"
 
     pool = Pool(n)
-    with open(raw, "rb") as input_file, open(result_file_path, "w") as output_file:
+    with open(raw, "rb") as input_file, open(result_file_path, "w") as output_file, open(feature_dict_path, "w") as cnmap_file:
+        for e, c in zip(output_header, config.output_cn_header):
+            if e not in config.primary_key:
+                cnmap_file.write(e + '\t' + c + '\n')
         output_file.write(sep.join(output_header) + '\n')
-        output_file.write(sep.join(config.output_cn_header) + '\n')
+        #output_file.write(sep.join(config.output_cn_header) + '\n')
         # skip header
         input_file.readline()
         for seq_no, out_data in pool.imap(config.pipefunc, \
