@@ -3,7 +3,7 @@ import numpy as np
 
 def PassThrough(vals, missing_value=[None], default=np.nan, **kwargs):
     """"""
-    if vals and vals.shape[0] == 0:
+    if vals.shape[0] == 0:
         return default
     else:
         vals = vals.ravel()
@@ -30,7 +30,10 @@ def UniqueCount(vals, missing_value=[None], default=np.nan, **kwargs):
     """去重个数"""
     if vals.shape[0] == 0:
         return default 
-    result = len(set([v for v in vals.ravel() if np.isnan(v) == False  and v not in missing_value]))
+    if 'S' or 'U' in vals.dtype:
+        result = len(set([v for v in vals.ravel() if v and v not in missing_value]))
+    else:
+        result = len(set([v for v in vals.ravel() if np.isnan(v) == False and v not in missing_value]))
     if result > 0:
         return result
     else:
