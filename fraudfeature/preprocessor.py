@@ -12,13 +12,13 @@ def parse_normal_time(vals, missing_value=[None], default=datetime(1900,1,1), **
 
 
 def parse_float(vals, missing_value=[None], default=np.nan, **kwargs):
-    _func = np.vectorize(lambda x: float(x) if x != "" and x is not None else default, otypes=[float])
+    _func = np.vectorize(lambda x: float(x) if x != "" and x is not None and x not in missing_value else default, otypes=[float])
     out = _func(vals) if vals.shape[0] != 0 else vals.reshape(-1, 1)
     return out
 
 
 def parse_str(vals, missing_value=[None], default=np.nan, **kwargs):
-    _func = np.vectorize(lambda x: str(x) if x != "" and x is not None else default)
+    _func = np.vectorize(lambda x: str(x) if x != "" and x is not None and x not in missing_value else default)
     out = _func(vals) if vals.shape[0] != 0 else vals.reshape(-1, 1)
     return out
 
