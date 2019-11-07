@@ -65,7 +65,11 @@ def generate(raw=None, result_file_path=None, conf=None,
             if seq_no == 0:
                 continue
             output_file.write(sep.join([str(v) for v in out_data]) + "\n")
+    return 0
 
 
 def check():
     pass
+from ._version import get_versions
+__version__ = get_versions()['version']
+del get_versions

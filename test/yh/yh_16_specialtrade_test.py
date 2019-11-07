@@ -10,10 +10,14 @@ from fraudfeature import Mean, Sum, Max, Min, Median, Quantile25, Quantile75, St
 
 class yh_specialtrade_test(unittest.TestCase):
     def setUp(self):
-        self.path   = "./data/specialtrade_data.tsv"
-        self.tmp = "./output/specialtrade_data_result_1.tsv"
-        self.tmp_cnmap = "./output/specialtrade_data_result_1_cnmap.tsv"
-        self.result = "./output/specialtrade_data_result.tsv"
+        # self.path   = "./data/specialtrade_data.tsv"
+        # self.tmp = "./output/specialtrade_data_result_1.tsv"
+        # self.tmp_cnmap = "./output/specialtrade_data_result_1_cnmap.tsv"
+        # self.result = "./output/specialtrade_data_result.tsv"
+        self.path   = "./test/data/specialtrade_data.tsv"
+        self.tmp = "./test/output/specialtrade_data_result_1.tsv"
+        self.tmp_cnmap = "./test/output/specialtrade_data_result_1_cnmap.tsv"
+        self.result = "./test/output/specialtrade_data_result.tsv"
         self.MONTH = 30
         
         self.conf_1 = {

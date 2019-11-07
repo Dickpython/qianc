@@ -1,6 +1,6 @@
 import sys
 import unittest
-sys.path.append('../../../')
+# sys.path.append('../../../')
 
 import fraudfeature as ftool
 from fraudfeature import day_interval
@@ -11,8 +11,10 @@ from fraudfeature import DummyCount, UniqueCount
 
 class yh_residence_test(unittest.TestCase):
     def setUp(self):
-        self.path   = "./data/residence_data.tsv"
-        self.result = "./output/residence_data_result.tsv"
+        # self.path   = "./data/residence_data.tsv"
+        # self.result = "./output/residence_data_result.tsv"
+        self.path   = "./test/data/residence_data.tsv"
+        self.result = "./test/output/residence_data_result.tsv"
         
         self.conf = {
             "index" : ["CONTNO","FLAG"],

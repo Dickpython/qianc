@@ -1,6 +1,6 @@
 import sys
 import unittest
-sys.path.append('../../../')
+# sys.path.append('../../../')
 
 import fraudfeature as ftool
 from fraudfeature import parse_ratio, month_interval
@@ -9,8 +9,10 @@ from fraudfeature import PassThrough
 
 class yh_creditsummary_test(unittest.TestCase):
     def setUp(self):
-        self.path   = "./data/creditsumm_data.tsv"
-        self.result = "./output/creditsumm_data_result.tsv"
+        # self.path   = "./data/creditsumm_data.tsv"
+        # self.result = "./output/creditsumm_data_result.tsv"
+        self.path   = "./test/data/creditsumm_data.tsv"
+        self.result = "./test/output/creditsumm_data_result.tsv"
         
         self.conf = {
             "index" : ["CONTNO","FLAG"],

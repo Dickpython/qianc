@@ -1,6 +1,6 @@
 import sys
 import unittest
-sys.path.append('../../../')
+# sys.path.append('../../../')
 
 import fraudfeature as ftool
 from fraudfeature import year_interval, parse_str
@@ -10,8 +10,10 @@ from fraudfeature import PassThrough
 
 class yh_identity_test(unittest.TestCase):
     def setUp(self):
-        self.path   = "./data/identity_data.tsv"
-        self.result = "./output/identity_data_result.tsv"
+        # self.path   = "./data/identity_data.tsv"
+        # self.result = "./output/identity_data_result.tsv"
+        self.path   = "./test/data/identity_data.tsv"
+        self.result = "./test/output/identity_data_result.tsv"
         
         self.conf = {
             "index" : ["CONTNO","FLAG"],

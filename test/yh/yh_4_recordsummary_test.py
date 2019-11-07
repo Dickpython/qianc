@@ -1,80 +1,71 @@
 import sys
 import unittest
-sys.path.append('../../../')
+# sys.path.append('../../../')
 
 import fraudfeature as ftool
 from fraudfeature import day_interval
 from fraudfeature import parse_region
 from fraudfeature import Mean, Sum, Max, Min, Median, Quantile25, Quantile75, Std
-from fraudfeature import DummyCount, UniqueCount
+from fraudfeature import DummyCount, UniqueCount, PassThrough
 
 
 class yh_recordsummary_test(unittest.TestCase):
     def setUp(self):
-        self.path   = "./data/recordsumm_data.tsv"
-        self.result = "./output/recordsumm_data_result.tsv"
+        # self.path   = "./data/recordsumm_data.tsv"
+        # self.result = "./output/recordsumm_data_result.tsv"
+        self.path   = "./test/data/recordsumm_data.tsv"
+        self.result = "./test/output/recordsumm_data_result.tsv"
         
         self.conf = {
             "index" : ["CONTNO","FLAG"],
             "feature_entries":[
                 {
-                    "feature":["RESIDENCETYPE"],
-                    "prefix": "Residencetype",
-                    "desc":"居住状态",
-                    "aggregator":[DummyCount,],
-                    "param":{"NotAvailable":"C0",
-                        "50|租房":"C1", 
-                        "99|其他":"C2", 
-                        "30|亲属楼宇":"C3", 
-                        "40|集体宿舍":"C4",
-                        "99|未知":"C5",
-                        "60|共有住宅":"C6",
-                        "10|自置": "C7",
-                        "20|按揭": "C8"},
-
+                    "feature":["CCARCY1EMIENQRINSTNUM"],
+                    "prefix": "Ccarcy1emienqrinstnum",
+                    "desc":"信用卡审批最近1个月内的查询机构数",
+                    "aggregator":[PassThrough,],
                 },
                 {
-                    "feature":["ADDRESS"],
-                    "prefix": "Addr_Region",
-                    "desc":"居住地址区域",
-                    "aggregator":[DummyCount,],
-                    "param":{
-                        "NotAvailable":"C0",
-                        "东北": "C1",
-                        "华东":"C2",
-                        "华中":"C3",
-                        "华北":"C4",
-                        "华南":"C5",
-                        "西北":"C6",
-                        "西南":"C7",
-                    }
+                    "feature":["LNAPRVRCY1EMIEINSTNUM"],
+                    "prefix": "Lnaprvrcy1emieinstnum",
+                    "desc":"贷款审批最近1个月内的查询机构数",
+                    "aggregator":[PassThrough,],
                 },
                 {
-                    "feature":["ADDRESS"],
-                    "prefix": "Addr_Citys",
-                    "desc":"居住所在城市",
-                    "aggregator":[UniqueCount,]
+                    "feature":["LNAPRVRCLY1EMIENQRCNT"],
+                    "prefix": "Lnaprvrcly1emienqrcnt",
+                    "desc":"贷款审批最近1个月内的查询次数",
+                    "aggregator":[PassThrough,]
                 },
                 {
-                    "feature":["ADDRESS"],
-                    "prefix": "Addr_Citytier",
-                    "desc":"居住城市等级",
-                    "aggregator":[DummyCount,],
-                    "param":{
-                        "NotAvailable":"C0",
-                        "T1": "C1",
-                        "T2a":"C2",
-                        "T2b":"C3",
-                        "T3":"C4",
-                        "T4-":"C5",
-                    }
+                    "feature":["CCARCY1EMINNRSENQRCNT"],
+                    "prefix": "Ccarcy1eminnrsenqrcnt",
+                    "desc":"信用卡审批最近1个月内的查询次数",
+                    "aggregator":[PassThrough,],
                 },
                 {
-                    "feature":["ECREDDATE", "GETTIME"],
-                    "prefix": "ApplyGettime_Interval",
-                    "preprocessor": day_interval,
-                    "desc":"居住信息更新时间差",
-                    "aggregator":[Quantile25, Quantile75, Max, Min, Mean, Sum, Median, Std], 
+                    "feature":["MYSLFENQRR1EMIENQRCNT"],
+                    "prefix": "Myslfenqrr1emienqrcnt",
+                    "desc":"本人查询最近1个月内的查询次数",
+                    "aggregator":[PassThrough,], 
+                },
+                {
+                    "feature":["PSTLOANMGTR2YIENQRCNT"],
+                    "prefix": "Pstloanmgtr2yienqrcnt",
+                    "desc":"贷后管理最近2年内的查询次数",
+                    "aggregator":[PassThrough,], 
+                },
+                {
+                    "feature":["WRNTQUAEXMR2YIENQRCNT"],
+                    "prefix": "Wrntquaexmr2yienqrcnt",
+                    "desc":"担保资格审查最近2年内的查询次数",
+                    "aggregator":[PassThrough,], 
+                },
+                {
+                    "feature":["APNTMRCHRNER2YIENRCNT"],
+                    "prefix": "Apntmrchrner2yienrcnt",
+                    "desc":"特约商户实名审查最近2年内的查询次数",
+                    "aggregator":[PassThrough,], 
                 },
             ]
         }

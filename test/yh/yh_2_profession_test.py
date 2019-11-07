@@ -1,6 +1,6 @@
 import sys
 import unittest
-sys.path.append('../../../')
+# sys.path.append('../../../')
 
 import fraudfeature as ftool
 from fraudfeature import year_interval
@@ -13,6 +13,8 @@ class yh_profession_test(unittest.TestCase):
     def setUp(self):
         self.path   = "./data/profession_data.tsv"
         self.result = "./output/profession_data_result.tsv"
+        self.path   = "./test/data/profession_data.tsv"
+        self.result = "./test/output/profession_data_result.tsv"
         
         self.conf = {
             "index" : ["CONTNO","FLAG"],

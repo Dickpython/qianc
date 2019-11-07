@@ -1,8 +1,8 @@
 import numpy as np
 from datetime import datetime
-from .util.common import parse_date, diff_date, diff_month, diff_year
-from .util.common import similarity
-from .util.common import find_region, find_city, find_citytier
+from .util import parse_date, diff_date, diff_month, diff_year
+from .util import similarity
+from .util import find_region, find_city, find_citytier
 
 
 def parse_normal_time(vals, missing_value=[None], default=datetime(1900,1,1), **kwargs):

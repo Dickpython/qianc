@@ -1,6 +1,6 @@
 import sys
 import unittest
-sys.path.append('../../../')
+# sys.path.append('../../../')
 
 import fraudfeature as ftool
 from fraudfeature import regex_match, day_interval, parse_24month
@@ -11,8 +11,10 @@ from fraudfeature import MulSum, MulMax, MulMin, MulMedian, MulStd
 
 class yh_identity_test(unittest.TestCase):
     def setUp(self):
-        self.path   = "./data/past24mon_data.tsv"
-        self.result = "./output/past24mon_data_result.tsv"
+        # self.path   = "./data/past24mon_data.tsv"
+        # self.result = "./output/past24mon_data_result.tsv"
+        self.path   = "./test/data/past24mon_data.tsv"
+        self.result = "./test/output/past24mon_data_result.tsv"
         self.MONTH = 30
         
         self.conf = {

@@ -1,6 +1,6 @@
 import sys
 import unittest
-sys.path.append('../../../')
+# sys.path.append('../../../')
 
 import fraudfeature as ftool
 from fraudfeature import regex_match, day_interval, year_interval, parse_ratio, parse_float
@@ -10,8 +10,10 @@ from fraudfeature import Mean, Sum, Max, Min, Median, Quantile25, Quantile75, St
 
 class yh_loancard_test(unittest.TestCase):
     def setUp(self):
-        self.path   = "./data/loancard_data.tsv"
-        self.result = "./output/loancard_data_result.tsv"
+        # self.path   = "./data/loancard_data.tsv"
+        # self.result = "./output/loancard_data_result.tsv"
+        self.path   = "./test/data/loancard_data.tsv"
+        self.result = "./test/output/loancard_data_result.tsv"
         self.MONTH = 30
         
         self.conf = {
