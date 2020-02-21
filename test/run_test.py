@@ -6,6 +6,7 @@ sys.path.append('../')
 testmodules = [
    "basic.aggregator_test",
    "basic.generate_test",
+   "basic.preprocess_test",
 ]
 
 suite = unittest.TestSuite()

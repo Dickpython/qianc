@@ -82,3 +82,10 @@ def parse_24month(vals, param, missing_value=[None], default=np.nan, **kwargs):
         return np.array([_LPS(v) for v in vals.ravel()]) 
     else:
         return np.array([[0]*len(param)])
+
+
+def parse_merge(vals, missing_value=[None], **kwargs):
+    out = []
+    for v in vals:
+        out.append(sum([int(_v) for _v in v if _v not in missing_value]))
+    return np.array(out)

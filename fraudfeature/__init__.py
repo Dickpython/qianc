@@ -9,7 +9,7 @@ from .aggregator import PassThrough, Mean, Sum, Max, Min, Median, Quantile25, Qu
 from .aggregator import DummyCount, MulMax, MulMin, MulSum, MulMean, MulStd, MulQuantile25, MulQuantile75, MulMedian
 from .preprocessor import parse_float, parse_str, day_interval, month_interval, year_interval
 from .preprocessor import cal_similarity, parse_24month, parse_ratio
-from .preprocessor import parse_region, parse_city, parse_citytier
+from .preprocessor import parse_region, parse_city, parse_citytier, parse_merge
 
 
 def __enumerate_group(sequence, keyfunc):
