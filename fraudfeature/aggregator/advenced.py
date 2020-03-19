@@ -44,10 +44,9 @@ def MulSum(vals, param, missing_value=[None], default=np.nan):
     _M.sort()
     result = {}
     if vals.shape[0] > 0:
-        if vals.shape[0] > 0:
-            _vals = np.sum(vals, axis=0)
-            for i,m in enumerate(_M):
-                result[param.get(m)+'_MulSum'] = _vals[i]
+        _vals = np.sum(vals, axis=0)
+        for i,m in enumerate(_M):
+            result[param.get(m)+'_MulSum'] = _vals[i]
         # for i, m in enumerate(_M):
         #     _vals = np.take(vals, i, axis=1)
         #     x = [v for v in _vals if np.isnan(v) == False and v not in missing_value]
@@ -81,7 +80,7 @@ def MulMean(vals, param, missing_value=[None], default=np.nan):
     if vals.shape[0] > 0:
         _vals = np.mean(vals, axis=0)
         for i,m in enumerate(_M):
-            result[param.get(m)+'_MulMax'] = _vals[i]
+            result[param.get(m)+'_MulMean'] = _vals[i]
         # for i, m in enumerate(_M):
         #     _vals = np.take(vals, i, axis=1)
         #     x = [v for v in _vals if np.isnan(v) == False and v not in missing_value]
