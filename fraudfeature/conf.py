@@ -91,9 +91,15 @@ class Conf:
                         if fe_entry.get("param") and isinstance(fe_entry.get("param"), dict):
                             _M = [k for k in fe_entry.get("param").keys()]
                             _M.sort()
+                            visited = set()
                             for target in _M:
-                                name.append("_".join([_pnm, fe_entry.get("param").get(target), f.__name__]))
-                                cn_name.append("_".join([_pnm_cn, fe_entry.get("param").get(target), f.__doc__]))
+                                tsf_val = fe_entry.get("param").get(target)
+                                if tsf_val in visited:
+                                    continue
+                                else:
+                                    visited.add(tsf_val)
+                                    name.append("_".join([_pnm, tsf_val, f.__name__]))
+                                    cn_name.append("_".join([_pnm_cn, tsf_val, f.__doc__]))
                         else:
                             if f.__name__ != 'PassThrough':
                                 name.append("_".join([_pnm, f.__name__]))

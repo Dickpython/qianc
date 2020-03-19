@@ -7,9 +7,17 @@ def DummyCount(vals, param, missing_value=[None], default=-1.):
         return {t+'_DummyCount': default for t in param.values()}
     c = Counter([v for v in vals.ravel() if v not in missing_value])
     result = {}
-    for origin, target in param.items():
+    _M = [k for k in param.keys()]
+    _M.sort()
+    visited = set()
+    for origin in _M:
         _v = c.get(origin, 0)
-        result[target+"_DummyCount"] = _v if _v > 0 else default
+        target = param[origin]
+        if target in visited :
+            result[target+"_DummyCount"] = result[target+"_DummyCount"] + _v
+        elif target not in visited :
+            result[target+"_DummyCount"] = _v if _v > 0 else default
+            visited.add(target)
     return result
 
 
