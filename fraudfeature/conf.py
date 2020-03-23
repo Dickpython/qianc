@@ -143,11 +143,12 @@ class Conf:
             arr = _check_time_index_validity(self.conf, self.col_index, arr)       
         return self._compute(seq_no, arr)
 
-    def apply_agg(self, func, arr, param=None):
+    def apply_agg(self, func, arr, pre, param=None):
         result, name = [], []
         if isinstance(func, list):
             for f in func:
-                _default = self.default_str if f.__name__ == 'PassThrough' else self.default
+                if f.__name__ == 'PassThrough':
+                    _default = self.default if pre and pre.__name__ in NUMR_PRE_FUNC else self.default_str
                 _r = f(vals=arr, missing_value=self.missing_value, default=_default, param=param)
                 if isinstance(_r, dict):
                     # Dictionaries are insertion ordered. 
@@ -200,7 +201,7 @@ class Conf:
                     f_arr = np.take(arr_ready, f_idx, axis=1)
                     if _preprc_func:
                         f_arr = self.apply_preprr(func=_preprc_func, arr=f_arr, param=fe_entry.get("param"))
-                    _fn, _rslt = self.apply_agg(func=fe_entry.get("aggregator"), arr=f_arr, param=fe_entry.get("param"))
+                    _fn, _rslt = self.apply_agg(func=fe_entry.get("aggregator"), arr=f_arr, pre=_preprc_func, param=fe_entry.get("param"))
                     for d in _rslt:
                         result.append(d)
         return seq_no, result
