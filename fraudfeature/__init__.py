@@ -2,11 +2,12 @@ import os
 
 from multiprocessing import Pool
 import time
+from datetime import datetime
 from tqdm import tqdm
 from .conf import Conf
 from .filter import equal, not_equal, regex_match, parse_all, match, not_match
 from .aggregator import PassThrough, Mean, Sum, Max, Min, Median, Quantile25, Quantile75, Std, UniqueCount
-from .aggregator import DummyCount, MulMax, MulMin, MulSum, MulMean, MulStd, MulQuantile25, MulQuantile75, MulMedian
+from .aggregator import DummyCount, MulMax, MulMin, MulSum, MulMean, MulStd, MulQuantile25, MulQuantile75, MulMedian, MulQuantile
 from .preprocessor import parse_float, parse_str, day_interval, month_interval, year_interval
 from .preprocessor import cal_similarity, parse_24month, parse_ratio
 from .preprocessor import parse_region, parse_city, parse_citytier, parse_merge
@@ -29,7 +30,7 @@ def __enumerate_group(sequence, keyfunc):
 def generate(raw=None, result_file_path=None, conf=None, 
         n=1, chunksize=1, debug=False, log_enable=False, log_path=None, 
         sep='\t', domain=None, cn_domain=None, 
-        missing_value=[],default=-99999., default_str="NotAvailable"):
+        missing_value=[],default=-99999., default_str="NotAvailable", default_time=datetime(1900,1,1)):
     if raw is None and os.path.exists(raw) is False:
         # log.Error raw file path not exists.
         return 

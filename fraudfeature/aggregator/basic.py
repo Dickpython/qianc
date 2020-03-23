@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def PassThrough(vals, missing_value=[None], default=np.nan, **kwargs):
+def PassThrough(vals, default, missing_value=[], **kwargs):
     """"""
     if vals.shape[0] == 0:
         return default
@@ -12,13 +12,14 @@ def PassThrough(vals, missing_value=[None], default=np.nan, **kwargs):
         return default
 
 
-def Count(vals, missing_value=[None], default=np.nan, **kwargs):
+def Count(vals, default, missing_value=[], **kwargs):
     """个数"""
     result = 0
     if vals.shape[0] == 0:
         return default 
     for v in vals.ravel():
-         if np.isnan(v) is False and v not in missing_value:
+         #if np.isnan(v) is False and v not in missing_value:
+         if v not in missing_value:
              result += 1
     if result > 0 :
         return result
@@ -26,7 +27,7 @@ def Count(vals, missing_value=[None], default=np.nan, **kwargs):
         return default
 
 
-def UniqueCount(vals, missing_value=[None], default=np.nan, **kwargs):
+def UniqueCount(vals, default, missing_value=[], **kwargs):
     """去重个数"""
     if vals.shape[0] == 0:
         return default 
@@ -40,7 +41,7 @@ def UniqueCount(vals, missing_value=[None], default=np.nan, **kwargs):
         return default
 
 
-def Sum(vals, missing_value=[None], default=np.nan, **kwargs):
+def Sum(vals, default, missing_value=[], **kwargs):
     """累和值"""
     if vals.shape[0] > 0:
         x = [ v for v in vals.ravel() if np.isnan(v) == False and v not in missing_value ]
@@ -49,7 +50,7 @@ def Sum(vals, missing_value=[None], default=np.nan, **kwargs):
     return default
 
 
-def Max(vals, missing_value=[None], default=np.nan, **kwargs):
+def Max(vals, default, missing_value=[], **kwargs):
     """最大值"""
     if vals.shape[0] > 0:
         x = [v for v in vals.ravel() if np.isnan(v) == False and v not in missing_value]
@@ -58,7 +59,7 @@ def Max(vals, missing_value=[None], default=np.nan, **kwargs):
     return default 
 
 
-def Min(vals, missing_value=[None], default=np.nan, **kwargs):
+def Min(vals, default, missing_value=[], **kwargs):
     """最小值"""
     if vals.shape[0] > 0:
         x = [v for v in vals.ravel() if np.isnan(v) == False and v not in missing_value]
@@ -67,7 +68,7 @@ def Min(vals, missing_value=[None], default=np.nan, **kwargs):
     return default 
 
 
-def Mean(vals, missing_value=[None], default=np.nan, **kwargs):
+def Mean(vals, default, missing_value=[], **kwargs):
     """平均值"""
     if vals.shape[0] == 0:
         return default
@@ -77,7 +78,7 @@ def Mean(vals, missing_value=[None], default=np.nan, **kwargs):
     return default
 
 
-def Std(vals, missing_value=[None], default=np.nan, **kwargs):
+def Std(vals, default, missing_value=[], **kwargs):
     """标准差"""
     if vals.shape[0] == 0:
         return default
@@ -87,7 +88,7 @@ def Std(vals, missing_value=[None], default=np.nan, **kwargs):
     return default
 
 
-def Median(vals, missing_value=[None], default=np.nan, **kwargs):
+def Median(vals, default, missing_value=[], **kwargs):
     """中位数"""
     if vals.shape[0] == 0:
         return default
@@ -97,7 +98,7 @@ def Median(vals, missing_value=[None], default=np.nan, **kwargs):
     return default 
 
 
-def Quantile25(vals, missing_value=[None], default=np.nan, **kwargs):
+def Quantile25(vals, default, missing_value=[], **kwargs):
     """分位数25"""
     if vals.shape[0] == 0:
         return default
@@ -106,7 +107,7 @@ def Quantile25(vals, missing_value=[None], default=np.nan, **kwargs):
     return std_r 
 
 
-def Quantile75(vals, missing_value=[None], default=np.nan, **kwargs):
+def Quantile75(vals, default, missing_value=[], **kwargs):
     """分位数75"""
     if vals.shape[0] == 0:
         return default

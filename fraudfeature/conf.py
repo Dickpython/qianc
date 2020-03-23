@@ -4,6 +4,11 @@ from .preprocessor import parse_normal_time
 #from numba import jit
 
 
+CHAR_PRE_FUNC = ('parse_str', 'parse_region', 'parse_city', 'parse_citytier')
+NUMR_PRE_FUNC = ('parse_float', 'day_interval', 'month_interval', 'year_interval',
+    'parse_ratio', 'cal_similarity')
+TIME_PRE_FUNC = ('parse_normal_time')
+
 #@jit(nopython=True)
 def _apply_timewindow(conf, col_index, tw, arr):
     aply_idx = int(col_index[conf.get("time_index").get("apply_dt")])
@@ -28,7 +33,7 @@ def _check_time_index_validity(conf, col_index, arr):
 
 class Conf:
     def __init__(self, path, conf, sep='\t', domain=None, cn_domain=None,
-        default=-99999., default_str="NotAvailable", missing_value=[None]):
+        default=-99999., default_str="NotAvailable", default_time=datetime(1900,1,1), missing_value=[None]):
         self.conf = conf
         self.domain = domain
         self.cn_domain=cn_domain
@@ -43,6 +48,7 @@ class Conf:
         self.default = default
         self.default_str = default_str
         self.missing_value = missing_value
+        self.default_time = default_time
         self.valid = self.check_conf()
         if self.valid:
             self._load_index(path)
@@ -92,14 +98,25 @@ class Conf:
                             _M = [k for k in fe_entry.get("param").keys()]
                             _M.sort()
                             visited = set()
-                            for target in _M:
-                                tsf_val = fe_entry.get("param").get(target)
-                                if tsf_val in visited:
-                                    continue
-                                else:
-                                    visited.add(tsf_val)
-                                    name.append("_".join([_pnm, tsf_val, f.__name__]))
-                                    cn_name.append("_".join([_pnm_cn, tsf_val, f.__doc__]))
+                            if f.__name__ in ('MulQuantile'):
+                                for r in ['25','50','75']:
+                                    for target in _M:
+                                        tsf_val = fe_entry.get("param").get(target)
+                                        if tsf_val in visited:
+                                            continue
+                                        else:
+                                            visited.add(tsf_val)
+                                            name.append("_".join([_pnm, tsf_val, f.__name__+r]))
+                                            cn_name.append("_".join([_pnm_cn, tsf_val, f.__doc__+r]))
+                            else:
+                                for target in _M:
+                                    tsf_val = fe_entry.get("param").get(target)
+                                    if tsf_val in visited:
+                                        continue
+                                    else:
+                                        visited.add(tsf_val)
+                                        name.append("_".join([_pnm, tsf_val, f.__name__]))
+                                        cn_name.append("_".join([_pnm_cn, tsf_val, f.__doc__]))
                         else:
                             if f.__name__ != 'PassThrough':
                                 name.append("_".join([_pnm, f.__name__]))
@@ -133,6 +150,9 @@ class Conf:
                 _default = self.default_str if f.__name__ == 'PassThrough' else self.default
                 _r = f(vals=arr, missing_value=self.missing_value, default=_default, param=param)
                 if isinstance(_r, dict):
+                    # Dictionaries are insertion ordered. 
+                    # As of Python 3.6, for the CPython implementation of Python
+                    # dictionaries remember the order of items inserted. 
                     for _n, _v in _r.items():
                         result.append(_v)
                         name.append(_n)
@@ -140,6 +160,13 @@ class Conf:
                     result.append(_r)
                     name.append(f.__name__)
         return name, result
+
+    def apply_preprr(self, func, arr, param):
+        _default = self.default
+        if func.__name__ in CHAR_PRE_FUNC : _default = self.default_str
+        if func.__name__ in TIME_PRE_FUNC : _default = self.default_time
+        f_arr = func(arr, missing_value=self.missing_value, param=param, default=_default)
+        return f_arr
 
     def apply_filter(self, func, param, arr):
         if isinstance(func, list) and isinstance(param, list):
@@ -168,11 +195,11 @@ class Conf:
                 arr_ready = np.compress(combine_cond, vals, axis=0)
 
                 for fe_entry in self.conf.get("feature_entries"):
-                    _preprcss = fe_entry.get("preprocessor")
+                    _preprc_func = fe_entry.get("preprocessor")
                     f_idx = [self.col_index[f] for f in fe_entry.get("feature")]
                     f_arr = np.take(arr_ready, f_idx, axis=1)
-                    if _preprcss:
-                        f_arr = _preprcss(f_arr, missing_value=self.missing_value, param=fe_entry.get("param"))
+                    if _preprc_func:
+                        f_arr = self.apply_preprr(func=_preprc_func, arr=f_arr, param=fe_entry.get("param"))
                     _fn, _rslt = self.apply_agg(func=fe_entry.get("aggregator"), arr=f_arr, param=fe_entry.get("param"))
                     for d in _rslt:
                         result.append(d)
