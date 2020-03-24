@@ -147,6 +147,7 @@ class Conf:
         result, name = [], []
         if isinstance(func, list):
             for f in func:
+                _default = self.default
                 if f.__name__ == 'PassThrough':
                     _default = self.default if pre and pre.__name__ in NUMR_PRE_FUNC else self.default_str
                 _r = f(vals=arr, missing_value=self.missing_value, default=_default, param=param)
