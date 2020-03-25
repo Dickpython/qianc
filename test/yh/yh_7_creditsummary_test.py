@@ -9,10 +9,10 @@ from fraudfeature import PassThrough
 
 class yh_creditsummary_test(unittest.TestCase):
     def setUp(self):
-        # self.path   = "./data/creditsumm_data.tsv"
-        # self.result = "./output/creditsumm_data_result.tsv"
-        self.path   = "./test/data/creditsumm_data.tsv"
-        self.result = "./test/output/creditsumm_data_result.tsv"
+        self.path   = "./data/creditsumm_data.tsv"
+        self.result = "./output/creditsumm_data_result.tsv"
+        # self.path   = "./test/data/creditsumm_data.tsv"
+        # self.result = "./test/output/creditsumm_data_result.tsv"
         
         self.conf = {
             "index" : ["CONTNO","FLAG"],
@@ -47,31 +47,31 @@ class yh_creditsummary_test(unittest.TestCase):
                 {
                     "feature":["PERHOUSELOANCOUNT", "OTHERLOANCOUNT"],
                     "prefix": "PerhouseloancntOtherloancnt_Ratio", "desc": "住房贷款其他贷款账户数比例",
-                    "preprocesssor": parse_ratio,
+                    "preprocessor": parse_ratio,
                     "aggregator":[PassThrough,],
                 },
                 {
                     "feature":["LOANCARDCOUNT", "STANDARDLOANCARDCOUNT"],
                     "prefix": "LoancardcntStdloancardcnt_Ratio", "desc": "贷记卡准贷记卡账户数比例",
-                    "preprocesssor": parse_ratio,
+                    "preprocessor": parse_ratio,
                     "aggregator":[PassThrough,],
                 },
                 {
                     "feature":["ECREDDATE", "FIRSTLOANOPENMONTH"],
                     "prefix": "ApplydtFirstloanopmon_Interval", "desc": "首笔贷款发放时间差",
-                    "preprocesssor": month_interval,
+                    "preprocessor": month_interval,
                     "aggregator":[PassThrough,],
                 },
                 {
                     "feature":["ECREDDATE", "FIRSTLOANCARDOPENMONTH"],
                     "prefix": "ApplydtFirstloancardopmon_Interval", "desc": "首张贷记卡发放时间差",
-                    "preprocesssor": month_interval,
+                    "preprocessor": month_interval,
                     "aggregator":[PassThrough,],
                 },
                 {
                     "feature":["ECREDDATE", "FIRSTSTANDARDLOANCARDOPENMONTH"],
                     "prefix": "ApplydtFirststdloancardopmon_Interval", "desc": "首张准贷记卡发放时间差",
-                    "preprocesssor": month_interval,
+                    "preprocessor": month_interval,
                     "aggregator":[PassThrough,],
                 },
             ]

@@ -13,8 +13,6 @@ class yh_profession_test(unittest.TestCase):
     def setUp(self):
         self.path   = "./data/profession_data.tsv"
         self.result = "./output/profession_data_result.tsv"
-        self.path   = "./data/profession_batch_data.tsv"
-        self.result = "./output/profession_batch_data_result.tsv"
         
         self.conf = {
             "index" : ["CONTNO","FLAG"],
@@ -165,7 +163,6 @@ class yh_profession_test(unittest.TestCase):
             raw = self.path, 
             result_file_path = self.result,
             conf = self.conf, 
-            n=4,
             missing_value = ['\\N', ''],
             domain = 'YH.PROFESSION.',
             cn_domain = '人行.职业信息.'

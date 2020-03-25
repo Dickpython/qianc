@@ -10,10 +10,8 @@ from fraudfeature import Mean, Sum, Max, Min, Median, Quantile25, Quantile75, St
 
 class yh_identity_test(unittest.TestCase):
     def setUp(self):
-        # self.path   = "./data/loan_data.tsv"
-        # self.result = "./output/loan_data_result.tsv"
-        self.path   = "./test/data/loan_data.tsv"
-        self.result = "./test/output/loan_data_result.tsv"
+        self.path   = "./data/loan_data.tsv"
+        self.result = "./output/loan_data_result.tsv"
         self.MONTH = 30
         
         self.conf = {

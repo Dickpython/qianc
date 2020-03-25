@@ -10,10 +10,10 @@ from fraudfeature import PassThrough
 
 class yh_overduesummary_test(unittest.TestCase):
     def setUp(self):
-        # self.path   = "./data/overduesum_data.tsv"
-        # self.result = "./output/overduesum_data_result.tsv"
-        self.path   = "./test/data/overduesum_data.tsv"
-        self.result = "./test/output/overduesum_data_result.tsv"
+        self.path   = "./data/overduesum_data.tsv"
+        self.result = "./output/overduesum_data_result.tsv"
+        # self.path   = "./test/data/overduesum_data.tsv"
+        # self.result = "./test/output/overduesum_data_result.tsv"
         
         self.conf = {
             "index" : ["CONTNO","FLAG"],

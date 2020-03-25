@@ -10,10 +10,10 @@ from fraudfeature import Mean, Sum, Max, Min, Median, Quantile25, Quantile75, St
 
 class yh_recorddeta_test(unittest.TestCase):
     def setUp(self):
-        # self.path   = "./data/recorddeta_data.tsv"
-        # self.result = "./output/recorddeta_data_result.tsv"
-        self.path   = "./test/data/recorddeta_data.tsv"
-        self.result = "./test/output/recorddeta_data_result.tsv"
+        self.path   = "./data/recorddeta_data.tsv"
+        self.result = "./output/recorddeta_data_result.tsv"
+        # self.path   = "./test/data/recorddeta_data.tsv"
+        # self.result = "./test/output/recorddeta_data_result.tsv"
         
         self.conf = {
             "index" : ["CONTNO","FLAG"],

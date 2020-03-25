@@ -4,17 +4,17 @@ import unittest
 
 import fraudfeature as ftool
 from fraudfeature import day_interval
-from fraudfeature import parse_region
+from fraudfeature import parse_region, parse_float
 from fraudfeature import Mean, Sum, Max, Min, Median, Quantile25, Quantile75, Std
 from fraudfeature import DummyCount, UniqueCount, PassThrough
 
 
 class yh_recordsummary_test(unittest.TestCase):
     def setUp(self):
-        # self.path   = "./data/recordsumm_data.tsv"
-        # self.result = "./output/recordsumm_data_result.tsv"
-        self.path   = "./test/data/recordsumm_data.tsv"
-        self.result = "./test/output/recordsumm_data_result.tsv"
+        self.path   = "./data/recordsumm_data.tsv"
+        self.result = "./output/recordsumm_data_result.tsv"
+        # self.path   = "./test/data/recordsumm_data.tsv"
+        # self.result = "./test/output/recordsumm_data_result.tsv"
         
         self.conf = {
             "index" : ["CONTNO","FLAG"],
@@ -22,6 +22,7 @@ class yh_recordsummary_test(unittest.TestCase):
                 {
                     "feature":["CCARCY1EMIENQRINSTNUM"],
                     "prefix": "Ccarcy1emienqrinstnum",
+                    "preprocessor": parse_float,
                     "desc":"信用卡审批最近1个月内的查询机构数",
                     "aggregator":[PassThrough,],
                 },
