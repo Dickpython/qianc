@@ -44,27 +44,27 @@ def UniqueCount(vals, default, missing_value=[], **kwargs):
 def Sum(vals, default, missing_value=[], **kwargs):
     """累和值"""
     if vals.shape[0] > 0:
-        x = [ v for v in vals.ravel() if np.isnan(v) == False and v not in missing_value ]
+        x = [ v for v in vals.ravel() if v not in missing_value ]
         if len(x) > 0:
-            return np.sum(x)
+            return np.nansum(x)
     return default
 
 
 def Max(vals, default, missing_value=[], **kwargs):
     """最大值"""
     if vals.shape[0] > 0:
-        x = [v for v in vals.ravel() if np.isnan(v) == False and v not in missing_value]
+        x = [v for v in vals.ravel() if v not in missing_value]
         if len(x) > 0:
-            return np.max(x)
+            return np.nanmax(x)
     return default 
 
 
 def Min(vals, default, missing_value=[], **kwargs):
     """最小值"""
     if vals.shape[0] > 0:
-        x = [v for v in vals.ravel() if np.isnan(v) == False and v not in missing_value]
+        x = [v for v in vals.ravel() if v not in missing_value]
         if len(x) > 0:
-            return np.min(x)
+            return np.nanmin(x)
     return default 
 
 
@@ -72,9 +72,9 @@ def Mean(vals, default, missing_value=[], **kwargs):
     """平均值"""
     if vals.shape[0] == 0:
         return default
-    _t = [v for v in vals.ravel() if np.isnan(v) == False and v not in missing_value]
+    _t = [v for v in vals.ravel() if v not in missing_value]
     if len(_t) > 0:
-        return np.mean(_t)
+        return np.nanmean(_t)
     return default
 
 
@@ -82,9 +82,9 @@ def Std(vals, default, missing_value=[], **kwargs):
     """标准差"""
     if vals.shape[0] == 0:
         return default
-    _t = [v for v in vals.ravel() if np.isnan(v) == False and v not in missing_value]
+    _t = [v for v in vals.ravel() if v not in missing_value]
     if len(_t) > 0:
-        return np.std(_t)
+        return np.nanstd(_t)
     return default
 
 
@@ -92,9 +92,9 @@ def Median(vals, default, missing_value=[], **kwargs):
     """中位数"""
     if vals.shape[0] == 0:
         return default
-    _t = [v for v in vals.ravel() if np.isnan(v) == False and v not in missing_value]
+    _t = [v for v in vals.ravel() if v not in missing_value]
     if len(_t) > 0:
-        return np.median(_t)
+        return np.nanmedian(_t)
     return default 
 
 
@@ -102,8 +102,8 @@ def Quantile25(vals, default, missing_value=[], **kwargs):
     """分位数25"""
     if vals.shape[0] == 0:
         return default
-    val_seq = np.array([v for v in vals.ravel() if np.isnan(v) == False and v not in missing_value])
-    std_r = np.percentile(val_seq, 25) if val_seq.shape[0] > 0 else default
+    val_seq = np.array([v for v in vals.ravel() if v not in missing_value])
+    std_r = np.nanpercentile(val_seq, 25) if val_seq.shape[0] > 0 else default
     return std_r 
 
 
@@ -111,6 +111,6 @@ def Quantile75(vals, default, missing_value=[], **kwargs):
     """分位数75"""
     if vals.shape[0] == 0:
         return default
-    val_seq = np.array([v for v in vals.ravel() if np.isnan(v) == False and v not in missing_value])
-    std_r = np.percentile(val_seq, 75) if val_seq.shape[0] > 0 else default
+    val_seq = np.array([v for v in vals.ravel() if v not in missing_value])
+    std_r = np.nanpercentile(val_seq, 75) if val_seq.shape[0] > 0 else default
     return std_r 
