@@ -6,15 +6,16 @@ from .preprocessor import parse_normal_time
 
 CHAR_PRE_FUNC = ('parse_str', 'parse_region', 'parse_city', 'parse_citytier')
 NUMR_PRE_FUNC = ('parse_float', 'day_interval', 'month_interval', 'year_interval',
-    'parse_ratio', 'cal_similarity')
+    'parse_ratio', 'cal_similarity', 'parse_merge')
 TIME_PRE_FUNC = ('parse_normal_time')
+NP_FUNC       = ('parse_24month')
 
 #@jit(nopython=True)
-def _apply_timewindow(conf, col_index, tw, arr):
+def _apply_timewindow(conf, col_index, tw, arr, default):
     aply_idx = int(col_index[conf.get("time_index").get("apply_dt")])
     evnt_idx = int(col_index[conf.get("time_index").get("event_dt")])
-    _ta = parse_normal_time(np.take(arr, aply_idx, axis=1))
-    _te = parse_normal_time(np.take(arr, evnt_idx, axis=1))
+    _ta = parse_normal_time(vals=np.take(arr, aply_idx, axis=1),default=default)
+    _te = parse_normal_time(vals=np.take(arr, evnt_idx, axis=1),default=default)
     return (_ta - _te) <= timedelta(tw)     
 
 
@@ -101,6 +102,7 @@ class Conf:
                             if f.__name__ in ('MulQuantile'):
                                 for r in ['25','50','75']:
                                     for target in _M:
+                                        visited = set()
                                         tsf_val = fe_entry.get("param").get(target)
                                         if tsf_val in visited:
                                             continue
@@ -137,10 +139,9 @@ class Conf:
         # skip the first empty sequence
         if vals == []:
             return seq_no, None
-        arr = np.array([np.array(v.decode().strip("\n").split(self.sep)) for v in vals], order='F') 
+        arr = np.array([np.array(v.decode().strip("\n").split(self.sep)) for v in vals], order='F')
         # If use `time_index`, check if `vals` is valid, if not return empty `clean`.
-        if "time_index" not in self.conf:
-            arr = _check_time_index_validity(self.conf, self.col_index, arr)       
+        arr = _check_time_index_validity(self.conf, self.col_index, arr)
         return self._compute(seq_no, arr)
 
     def apply_agg(self, func, arr, pre, param=None):
@@ -150,6 +151,8 @@ class Conf:
                 _default = self.default
                 if f.__name__ == 'PassThrough':
                     _default = self.default if pre and pre.__name__ in NUMR_PRE_FUNC else self.default_str
+                if pre and pre.__name__ in NUMR_PRE_FUNC:
+                    self.missing_value.append(_default)
                 _r = f(vals=arr, missing_value=self.missing_value, default=_default, param=param)
                 if isinstance(_r, dict):
                     # Dictionaries are insertion ordered. 
@@ -167,6 +170,7 @@ class Conf:
         _default = self.default
         if func.__name__ in CHAR_PRE_FUNC : _default = self.default_str
         if func.__name__ in TIME_PRE_FUNC : _default = self.default_time
+        if func.__name__ in NP_FUNC       : _default = np.nan
         f_arr = func(arr, missing_value=self.missing_value, param=param, default=_default)
         return f_arr
 
@@ -186,7 +190,7 @@ class Conf:
         # Use `time_window` then combine with `filters` as criteria to select array data.
         time_window = self.conf.get("time_window") if "time_window" in self.conf else [None]
         for tw in time_window:
-            tm_cond = _apply_timewindow(self.conf, self.col_index, tw, vals) if tw else np.array([True] * vals.shape[0])
+            tm_cond = _apply_timewindow(self.conf, self.col_index, tw, vals, self.default_time) if tw else np.array([True] * vals.shape[0])
             combine_cond = tm_cond
             for f in self.conf.get("filters", [None]):
                 if f is not None:
