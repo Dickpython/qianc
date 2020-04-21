@@ -35,6 +35,7 @@ def generate(raw=None, result_file_path=None, conf=None,
         # log.Error raw file path not exists.
         return 
     if os.path.exists("/".join(result_file_path.split('/')[:-1])) is False:
+        print("[ERROR] Input file not exists!")
         # log.Error result file path not exists
         return
     config = Conf(path=raw, conf=conf, sep=sep, domain=domain, 
@@ -42,6 +43,7 @@ def generate(raw=None, result_file_path=None, conf=None,
     default=default, default_str=default_str) 
     if config.valid is False:
         # log.Error configuration is invalid
+        print("[ERROR] configuration is invalid!")
         return
 
     output_header = config.output_header
