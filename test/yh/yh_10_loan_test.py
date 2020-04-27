@@ -289,7 +289,7 @@ class yh_identity_test(unittest.TestCase):
             raw = self.path, 
             result_file_path = self.result,
             conf = self.conf, 
-            missing_value = [None, '\\N', ''],
+            missing_value = [None, '\\N', '',-99999.],
             domain = 'YH.LOAN.',
             cn_domain = '人行.贷款.'
         )

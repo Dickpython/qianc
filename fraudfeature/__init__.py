@@ -32,10 +32,11 @@ def generate(raw=None, result_file_path=None, conf=None,
         sep='\t', domain=None, cn_domain=None, 
         missing_value=[],default=-99999., default_str="NotAvailable", default_time=datetime(1900,1,1)):
     if raw is None and os.path.exists(raw) is False:
+        print("[ERROR] Input file not exists!")
         # log.Error raw file path not exists.
         return 
     if os.path.exists("/".join(result_file_path.split('/')[:-1])) is False:
-        print("[ERROR] Input file not exists!")
+        print("[ERROR] Output file not exists!")
         # log.Error result file path not exists
         return
     config = Conf(path=raw, conf=conf, sep=sep, domain=domain, 
