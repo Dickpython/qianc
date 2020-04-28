@@ -5,7 +5,7 @@
 ~~~~~~~~~~
 generate(raw=None, result_file_path=None, conf=None, n=1, chunksize=1, 
     debug=False, log_enable=False, log_path=None, sep='\t', domain=None, cn_domain=None, 
-    missing_value=[],default=-99999.,default_str="NotAvailable")
+    missing_value=[],default=-99999.,default_str="NotAvailable", defualt_time=date(1900,1,1))
 ~~~~~~~~~~
 
 #### Params
