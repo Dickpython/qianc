@@ -21,5 +21,7 @@ generate(raw=None, result_file_path=None, conf=None, n=1, chunksize=1,
 - **domain**, string, 特征Domain的英文前缀。
 - **cn_domain**, string, 特征Domain的中文前缀。
 - **missing_value**, list, 全局缺失值列举。
-- **default**, float, 全局连续型默认值。
-- **default_str**, string, 全局离散型默认值。
+- **default**, float, 全局连续型默认值，默认值-99999.。
+- **default_str**, string, 全局字符型默认值，默认值NotAvailable。
+- **default_time**, string, 全局时间日期默认值，默认值1900年1月1日。
+
