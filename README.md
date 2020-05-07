@@ -8,6 +8,7 @@ FraudFeature人行特征衍生工具，是对anti_fraud_sys老的特征脚本做
 # Table of Content
 
 - [Installation](##Installation)
+- [Quick Test]
 - [Usage](##Usage)
 - [Example and Advance Usage]()
 - [Document]()
@@ -29,6 +30,13 @@ pip install fraudfeature
 ~~~~~~~~~~~~~~
 3. 或使用git clone代码到本地，本地引入使用；
 
+## Quick Test
+
+进入test目录，直接运行run_test.py检查FraudFeature测试用例是否通过
+```
+    cd ./test
+    python run_test.py
+```
 
 ## Usage
 
