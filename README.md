@@ -8,7 +8,7 @@ FraudFeature人行特征衍生工具，是对anti_fraud_sys老的特征脚本做
 # Table of Content
 
 - [Installation](##Installation)
-- [Quick Test]
+- [Quick Test](## Quick Test)
 - [Usage](##Usage)
 - [Example and Advance Usage]()
 - [Document]()
