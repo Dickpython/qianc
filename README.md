@@ -79,19 +79,24 @@ pip install fraudfeature
 ## FAQ
 
 #### Q1. 输入文件是否需要排序？
-Answer: 需要，输入文件请按照唯一标识字段进行排序后，再使用特征衍生工具。
+Answer: 需要
+输入文件请按照**唯一标识字段**先排序，再使用FraudFeature。
 
 #### Q2. 如何并行地进行特征衍生？
 Answer: 特征衍生函数generate中使用参数n，可以指定衍生特征的并行个数。默认n=1。
 
 #### Q3. generate()函数中的默认值，使用有哪些注意事项？
-Answer: fraudfeature默认值，主要是指当遇到无效输入和算子计算结果无效需要填充的默认值，定义为默认值。fraudfeature使用全局的默认值，即在generate(..)函数里可以定义全局的default，全局default根据算子的数据类型分为3类：
+Answer: fraudfeature默认值的定义，当遇到无效输入和无效结果时，需要填充默认值。
+fraudfeature使用全局默认值，即generate(..)函数中可定义全局default，全局default根据算子数据类型分为3类：
 
 - 1）数值型的算子；
 - 2）字符型的算子；
 - 3）时间类型算子；
 
-不同类型的算子，会默认自动应用default=-99999.0, default_str="NotAvailable", default_time=datetime(1900,1,1)。
+不同类型的算子，会使用不同默认值。
+数值型算子，默认default=-99999.0
+字符型算子，默认default_str="NotAvailable"
+时间类型算子，默认default_time=datetime(1900,1,1)
 
 #### Q4. PassThrough算子的默认值是怎样的？
 Answer: PassThrough的默认值，默认使用default_str,当preprocessor为parse_float时default value为numeric的default
@@ -100,4 +105,4 @@ Answer: PassThrough的默认值，默认使用default_str,当preprocessor为pars
 Answer: 
 missing_value用来定义全局的缺失值，默认missing_value是一个包含None值的List，全局缺失值这处理时，对将missing_value列表中所有的值都当作是缺失处理，不参与运算。
 
-因为fraudfeature所有的输入最初都会被当作str来读取，因此确实值都要使用引号包裹，尤其是在二次计算的domain中，上一级计算结果默认值'-99999.0',在下一级的missing_value中要添加上，否则-99999.0可能会参与计算，导致结果异常。
+因为fraudfeature所有的输入最初都会被当作str来读取，因此Missing Value都要使用引号包裹，尤其是在二次计算domain中，上一级计算结果默认值'-99999.0',在下一级的missing_value中要添加上，否则-99999.0可能会参与计算，导致结果异常。
