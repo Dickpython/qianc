@@ -9,10 +9,10 @@ from fraudfeature import PassThrough
 
 class yh_creditscore_test(unittest.TestCase):
     def setUp(self):
-        # self.path   = "./data/creditscore_data.tsv"
-        # self.result = "./output/creditscore_data_result.tsv"
-        self.path   = "./test/data/creditscore_data.tsv"
-        self.result = "./test/output/creditscore_data_result.tsv"
+        self.path   = "./data/creditscore_data.tsv"
+        self.result = "./output/creditscore_data_result.tsv"
+        # self.path   = "./test/data/creditscore_data.tsv"
+        # self.result = "./test/output/creditscore_data_result.tsv"
         
         self.conf = {
             "index" : ["CONTNO","FLAG"],

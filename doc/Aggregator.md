@@ -7,6 +7,7 @@ Aggregator是特征衍生最后进行聚合、统计计算的函数。
 
 ### PassThrough
 直接透传数据，仅支持传非array数据.
+PassThrough的默认值，默认使用default_str,当preprocessor为parse_float时default value为numeric的default
 
 ### Count
 对一组数据进行个数计算，去除missing_value.

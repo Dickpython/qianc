@@ -2,7 +2,8 @@ from datetime import datetime
 from dateutil.parser import parse
 from fuzzywuzzy.fuzz import ratio
 from .place import __byname
-
+import re
+china_prefix = re.compile('^中国')
 
 def parse_date(date_str, dayfirst=False):
     if date_str in ('00000000','00000101','19000101','1900.01','1900.01.01','1900','190001'):
@@ -60,6 +61,7 @@ def similarity(str_tuple, default):
 
 
 def find_region(x):
+    x = x[2:] if china_prefix.search(x) else x
     d = __byname(x)
     if d:
         return d.region()
@@ -67,6 +69,7 @@ def find_region(x):
 
 
 def find_city(x):
+    x = x[2:] if china_prefix.search(x) else x
     d = __byname(x)
     if d:
         c = d.curcity()
@@ -76,6 +79,7 @@ def find_city(x):
 
 
 def find_citytier(x):
+    x = x[2:] if china_prefix.search(x) else x
     d = __byname(x)
     if d:
         return d.tier()

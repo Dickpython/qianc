@@ -5,8 +5,11 @@ sys.path.append('../')
 
 testmodules = [
    "basic.aggregator_test",
-   "basic.generate_test",
+    "basic.generate_test",
    "basic.preprocess_test",
+   "basic.filter_test",
+   "basic.filter_24m_quantile_test",
+   "basic.prepro_time_interval_test",
 ]
 
 suite = unittest.TestSuite()

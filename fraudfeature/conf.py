@@ -4,12 +4,18 @@ from .preprocessor import parse_normal_time
 #from numba import jit
 
 
+CHAR_PRE_FUNC = ('parse_str', 'parse_region', 'parse_city', 'parse_citytier')
+NUMR_PRE_FUNC = ('parse_float', 'day_interval', 'month_interval', 'year_interval',
+    'parse_ratio', 'cal_similarity', 'parse_merge')
+TIME_PRE_FUNC = ('parse_normal_time')
+NP_FUNC       = ('parse_24month')
+
 #@jit(nopython=True)
-def _apply_timewindow(conf, col_index, tw, arr):
+def _apply_timewindow(conf, col_index, tw, arr, default):
     aply_idx = int(col_index[conf.get("time_index").get("apply_dt")])
     evnt_idx = int(col_index[conf.get("time_index").get("event_dt")])
-    _ta = parse_normal_time(np.take(arr, aply_idx, axis=1))
-    _te = parse_normal_time(np.take(arr, evnt_idx, axis=1))
+    _ta = parse_normal_time(vals=np.take(arr, aply_idx, axis=1),default=default)
+    _te = parse_normal_time(vals=np.take(arr, evnt_idx, axis=1),default=default)
     return (_ta - _te) <= timedelta(tw)     
 
 
@@ -28,7 +34,7 @@ def _check_time_index_validity(conf, col_index, arr):
 
 class Conf:
     def __init__(self, path, conf, sep='\t', domain=None, cn_domain=None,
-        default=-99999., default_str="NotAvailable", missing_value=[None]):
+        default=-99999., default_str="NotAvailable", default_time=datetime(1900,1,1), missing_value=[None]):
         self.conf = conf
         self.domain = domain
         self.cn_domain=cn_domain
@@ -43,6 +49,7 @@ class Conf:
         self.default = default
         self.default_str = default_str
         self.missing_value = missing_value
+        self.default_time = default_time
         self.valid = self.check_conf()
         if self.valid:
             self._load_index(path)
@@ -91,9 +98,27 @@ class Conf:
                         if fe_entry.get("param") and isinstance(fe_entry.get("param"), dict):
                             _M = [k for k in fe_entry.get("param").keys()]
                             _M.sort()
-                            for target in _M:
-                                name.append("_".join([_pnm, fe_entry.get("param").get(target), f.__name__]))
-                                cn_name.append("_".join([_pnm_cn, fe_entry.get("param").get(target), f.__doc__]))
+                            visited = set()
+                            if f.__name__ in ('MulQuantile'):
+                                for r in ['25','50','75']:
+                                    for target in _M:
+                                        visited = set()
+                                        tsf_val = fe_entry.get("param").get(target)
+                                        if tsf_val in visited:
+                                            continue
+                                        else:
+                                            visited.add(tsf_val)
+                                            name.append("_".join([_pnm, tsf_val, f.__name__+r]))
+                                            cn_name.append("_".join([_pnm_cn, tsf_val, f.__doc__+r]))
+                            else:
+                                for target in _M:
+                                    tsf_val = fe_entry.get("param").get(target)
+                                    if tsf_val in visited:
+                                        continue
+                                    else:
+                                        visited.add(tsf_val)
+                                        name.append("_".join([_pnm, tsf_val, f.__name__]))
+                                        cn_name.append("_".join([_pnm_cn, tsf_val, f.__doc__]))
                         else:
                             if f.__name__ != 'PassThrough':
                                 name.append("_".join([_pnm, f.__name__]))
@@ -114,19 +139,25 @@ class Conf:
         # skip the first empty sequence
         if vals == []:
             return seq_no, None
-        arr = np.array([np.array(v.decode().strip("\n").split(self.sep)) for v in vals], order='F') 
+        arr = np.array([np.array(v.decode().strip("\n").split(self.sep)) for v in vals], order='F')
         # If use `time_index`, check if `vals` is valid, if not return empty `clean`.
-        if "time_index" not in self.conf:
-            arr = _check_time_index_validity(self.conf, self.col_index, arr)       
+        arr = _check_time_index_validity(self.conf, self.col_index, arr)
         return self._compute(seq_no, arr)
 
-    def apply_agg(self, func, arr, param=None):
+    def apply_agg(self, func, arr, pre, param=None):
         result, name = [], []
         if isinstance(func, list):
             for f in func:
-                _default = self.default_str if f.__name__ == 'PassThrough' else self.default
+                _default = self.default
+                if f.__name__ == 'PassThrough':
+                    _default = self.default if pre and pre.__name__ in NUMR_PRE_FUNC else self.default_str
+                if pre and pre.__name__ in NUMR_PRE_FUNC:
+                    self.missing_value.append(_default)
                 _r = f(vals=arr, missing_value=self.missing_value, default=_default, param=param)
                 if isinstance(_r, dict):
+                    # Dictionaries are insertion ordered. 
+                    # As of Python 3.6, for the CPython implementation of Python
+                    # dictionaries remember the order of items inserted. 
                     for _n, _v in _r.items():
                         result.append(_v)
                         name.append(_n)
@@ -134,6 +165,14 @@ class Conf:
                     result.append(_r)
                     name.append(f.__name__)
         return name, result
+
+    def apply_preprr(self, func, arr, param):
+        _default = self.default
+        if func.__name__ in CHAR_PRE_FUNC : _default = self.default_str
+        if func.__name__ in TIME_PRE_FUNC : _default = self.default_time
+        if func.__name__ in NP_FUNC       : _default = np.nan
+        f_arr = func(arr, missing_value=self.missing_value, param=param, default=_default)
+        return f_arr
 
     def apply_filter(self, func, param, arr):
         if isinstance(func, list) and isinstance(param, list):
@@ -151,7 +190,7 @@ class Conf:
         # Use `time_window` then combine with `filters` as criteria to select array data.
         time_window = self.conf.get("time_window") if "time_window" in self.conf else [None]
         for tw in time_window:
-            tm_cond = _apply_timewindow(self.conf, self.col_index, tw, vals) if tw else np.array([True] * vals.shape[0])
+            tm_cond = _apply_timewindow(self.conf, self.col_index, tw, vals, self.default_time) if tw else np.array([True] * vals.shape[0])
             combine_cond = tm_cond
             for f in self.conf.get("filters", [None]):
                 if f is not None:
@@ -162,12 +201,12 @@ class Conf:
                 arr_ready = np.compress(combine_cond, vals, axis=0)
 
                 for fe_entry in self.conf.get("feature_entries"):
-                    _preprcss = fe_entry.get("preprocessor")
+                    _preprc_func = fe_entry.get("preprocessor")
                     f_idx = [self.col_index[f] for f in fe_entry.get("feature")]
                     f_arr = np.take(arr_ready, f_idx, axis=1)
-                    if _preprcss:
-                        f_arr = _preprcss(f_arr, missing_value=self.missing_value, param=fe_entry.get("param"))
-                    _fn, _rslt = self.apply_agg(func=fe_entry.get("aggregator"), arr=f_arr, param=fe_entry.get("param"))
+                    if _preprc_func:
+                        f_arr = self.apply_preprr(func=_preprc_func, arr=f_arr, param=fe_entry.get("param"))
+                    _fn, _rslt = self.apply_agg(func=fe_entry.get("aggregator"), arr=f_arr, pre=_preprc_func, param=fe_entry.get("param"))
                     for d in _rslt:
                         result.append(d)
         return seq_no, result

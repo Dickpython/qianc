@@ -4,17 +4,15 @@ import unittest
 
 import fraudfeature as ftool
 from fraudfeature import year_interval
-from fraudfeature import parse_region
+from fraudfeature import parse_region,parse_citytier, parse_city
 from fraudfeature import Mean, Sum, Max, Min, Median, Quantile25, Quantile75
-from fraudfeature import DummyCount
+from fraudfeature import DummyCount, UniqueCount
 
 
 class yh_profession_test(unittest.TestCase):
     def setUp(self):
         self.path   = "./data/profession_data.tsv"
         self.result = "./output/profession_data_result.tsv"
-        self.path   = "./test/data/profession_data.tsv"
-        self.result = "./test/output/profession_data_result.tsv"
         
         self.conf = {
             "index" : ["CONTNO","FLAG"],
@@ -120,7 +118,42 @@ class yh_profession_test(unittest.TestCase):
                         "西南": "C7",
                     }
                 },
-
+                {
+                    "feature": ["EMPLOYERADDRESS"],
+                    "preprocessor": parse_region,
+                    "prefix": "Employeraddr_Region",
+                    "desc": "单位地址区域",
+                    "aggregator": [UniqueCount,]
+                },
+                {
+                    "feature": ["EMPLOYERADDRESS"],
+                    "preprocessor": parse_city,
+                    "prefix": "Employeraddr_City",
+                    "desc": "单位地址区域",
+                    "aggregator": [UniqueCount,]
+                },
+                {
+                    "feature": ["EMPLOYERADDRESS"],
+                    "preprocessor": parse_citytier,
+                    "prefix": "Employeraddr_CityTier",
+                    "desc": "单位地址区域",
+                    "aggregator": [DummyCount,],
+                    "param":{
+                        "NotAvailable": "C0",
+                        "T1": "C1",
+                        "T2a": "C2",
+                        "T2b": "C3",
+                        "T3": "C4",
+                        "T4-": "C5"
+                    }
+                },
+                {
+                    "feature": ["EMPLOYERADDRESS"],
+                    "preprocessor": parse_citytier,
+                    "prefix": "Employeraddr_CityTier",
+                    "desc": "单位地址区域",
+                    "aggregator": [UniqueCount,],
+                },
             ]
         }
     

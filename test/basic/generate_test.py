@@ -67,6 +67,8 @@ class generate_test(unittest.TestCase):
     def test_generate_process(self):
         ftool.generate(
             raw = self.path, 
+	    n =8 ,
+            chunksize=10,
             result_file_path = self.result,
             conf = self.conf,
             domain = 'test.',

@@ -6,15 +6,13 @@ import fraudfeature as ftool
 from fraudfeature import regex_match, day_interval, parse_24month
 from fraudfeature import DummyCount, PassThrough
 from fraudfeature import Mean, Sum, Max, Min, Median, Quantile25, Quantile75
-from fraudfeature import MulSum, MulMax, MulMin, MulMedian, MulStd
+from fraudfeature import MulSum, MulMax, MulMin, MulMedian, MulStd, MulQuantile
 
 
 class yh_identity_test(unittest.TestCase):
     def setUp(self):
-        # self.path   = "./data/past24mon_data.tsv"
-        # self.result = "./output/past24mon_data_result.tsv"
-        self.path   = "./test/data/past24mon_data.tsv"
-        self.result = "./test/output/past24mon_data_result.tsv"
+        self.path   = "./data/past24mon_data.tsv"
+        self.result = "./output/past24mon_data_result.tsv"
         self.MONTH = 30
         
         self.conf = {
@@ -41,7 +39,7 @@ class yh_identity_test(unittest.TestCase):
                     "prefix": "State",
                     "desc": "状态",
                     "preprocessor":parse_24month,
-                    "aggregator": [MulMax,],
+                    "aggregator": [MulQuantile,],
                     "param": {'N':'C1', '1':'C2', '*':'C3', '2':'C4', '/':'C5', '#':'C6', 'C':'C7',
                         '3':'C8', '4':'C9', '5':'C10', '6':'C11', '7':'C12', 'D':'C13', 'G':'C14'}
                 },
