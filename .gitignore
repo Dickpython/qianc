@@ -12,3 +12,7 @@ fraudfeature/.DS_Store
 gitattributes
 __pycache__/
 test/basic/__pycache__/
+dist/
+build/
+test_v2/
+

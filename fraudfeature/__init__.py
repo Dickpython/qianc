@@ -33,23 +33,19 @@ def generate(raw=None, result_file_path=None, conf=None,
         missing_value=[],default=-99999., default_str="NotAvailable", default_time=datetime(1900,1,1)):
     if raw is None and os.path.exists(raw) is False:
         print("[ERROR] Input file not exists!")
-        # log.Error raw file path not exists.
         return 
     if os.path.exists("/".join(result_file_path.split('/')[:-1])) is False:
         print("[ERROR] Output file not exists!")
-        # log.Error result file path not exists
         return
     config = Conf(path=raw, conf=conf, sep=sep, domain=domain, 
     cn_domain=cn_domain, missing_value=missing_value,
     default=default, default_str=default_str) 
     if config.valid is False:
-        # log.Error configuration is invalid
         print("[ERROR] configuration is invalid!")
         return
 
     output_header = config.output_header
     if output_header is None or len(output_header) == 0:
-        # loger.Info header is invalid!
         print("[INFO] header is invalid!")
         output_header = ""
     # log.Info, log key_index
