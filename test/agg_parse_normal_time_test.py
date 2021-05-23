@@ -11,4 +11,3 @@ class parse_normal_time_test(unittest.TestCase):
 		result = parse_normal_time(self.vals)
 		print(result)
 
-
